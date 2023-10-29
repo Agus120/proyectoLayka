@@ -27,7 +27,7 @@ public class Juego extends InterfaceJuego {
 	int cont = 0;
 	boolean disparando = false;
 	boolean vivo = true;
-	
+
 	Image fondo = Herramientas.cargarImagen("calles.png");
 	Image imgFondoMuerto = Herramientas.cargarImagen("perdi.png");
 
@@ -35,17 +35,17 @@ public class Juego extends InterfaceJuego {
 
 	Image fondoMenu = Herramientas.cargarImagen("FondoMenu.png");
 
-    private static final int ESTADO_MENU = 0;
-    private static final int ESTADO_JUEGO = 1;
-    private static final int ESTADO_PUNTUACION = 2;
+	private static final int ESTADO_MENU = 0;
+	private static final int ESTADO_JUEGO = 1;
+	private static final int ESTADO_PUNTUACION = 2;
 
-    private int estadoActual;
+	private int estadoActual;
 
-    private Boton botonJugar;
-    private Boton botonSalir;
-    private int selectedButton = 0;
-    private boolean keyEnabled = true;
-    private long keyDelay = 200;
+	private Boton botonJugar;
+	private Boton botonSalir;
+	private int selectedButton = 0;
+	private boolean keyEnabled = true;
+	private long keyDelay = 200;
 
 	// ************************** */
 
@@ -86,11 +86,11 @@ public class Juego extends InterfaceJuego {
 				manzanitas[i] = new Manzanas(166 + (234 * (i - 3)), 427, 1);
 			}
 		}
-		
+
 		botonJugar = new Boton(120, 300, 150, 50, "Jugar");
-        botonSalir = new Boton(120, 400, 150, 50, "Salir");
-        
-        // Inicia el juego!
+		botonSalir = new Boton(120, 400, 150, 50, "Salir");
+
+		// Inicia el juego!
 		this.entorno.iniciar();
 	}
 
@@ -125,71 +125,44 @@ public class Juego extends InterfaceJuego {
 
 	}
 
-	/**
-	 * Durante el juego, el método tick() será ejecutado en cada instante y
-	 * por lo tanto es el método más importante de esta clase. Aquí se debe
-	 * actualizar el estado interno del juego para simular el paso del tiempo
-	 * (ver el enunciado del TP para mayor detalle).
-	 */
 	public void tick() {
 		switch (estadoActual) {
 			case ESTADO_MENU:
 				entorno.dibujarImagen(fondoMenu, 400, 300, 0);
-                // Control con teclado en el menú
-                if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && keyEnabled) {
-                    selectedButton = (selectedButton == 0) ? 1 : 0;
-                    keyEnabled = false;
-                } else if (entorno.estaPresionada(entorno.TECLA_ABAJO) && keyEnabled) {
-                    selectedButton = (selectedButton == 1) ? 0 : 1;
-                    keyEnabled = false;
-                } else if (!entorno.estaPresionada(entorno.TECLA_ARRIBA)
-                        && !entorno.estaPresionada(entorno.TECLA_ABAJO)) {
-                    keyEnabled = true;
-                }
+				// Control con teclado en el menú
+				if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && keyEnabled) {
+					selectedButton = (selectedButton == 0) ? 1 : 0;
+					keyEnabled = false;
+				} else if (entorno.estaPresionada(entorno.TECLA_ABAJO) && keyEnabled) {
+					selectedButton = (selectedButton == 1) ? 0 : 1;
+					keyEnabled = false;
+				} else if (!entorno.estaPresionada(entorno.TECLA_ARRIBA)
+						&& !entorno.estaPresionada(entorno.TECLA_ABAJO)) {
+					keyEnabled = true;
+				}
 
-                // Lógica para cambiar de estado al presionar "Enter"
-                if (entorno.estaPresionada(entorno.TECLA_ENTER)) {
-                    if (selectedButton == 0) {
-                        estadoActual = ESTADO_JUEGO;
-                    } else if (selectedButton == 1) {
-                        System.exit(0);
-                    }
-                }
+				// Lógica para cambiar de estado al presionar "Enter"
+				if (entorno.estaPresionada(entorno.TECLA_ENTER)) {
+					if (selectedButton == 0) {
+						estadoActual = ESTADO_JUEGO;
+					} else if (selectedButton == 1) {
+						System.exit(0);
+					}
+				}
 
-                // Dibujar botones
-                botonJugar.setActivo(selectedButton == 0);
-                botonSalir.setActivo(selectedButton == 1);
-                botonJugar.dibujar(entorno);
-                botonSalir.dibujar(entorno);
+				// Dibujar botones
+				botonJugar.setActivo(selectedButton == 0);
+				botonSalir.setActivo(selectedButton == 1);
+				botonJugar.dibujar(entorno);
+				botonSalir.dibujar(entorno);
 
-                break;
+				break;
 
 			case ESTADO_JUEGO:
 				if (vivo) {
 					entorno.dibujarImagen(fondo, 400, 300, 0);
-					if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionm(manzanitas, perrita) != 1) {
-						perrita.mover(1, this.entorno);
-					}
 
-					if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanitas, perrita) != 0) {
-						perrita.mover(0, this.entorno);
-					}
-
-					if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionm(manzanitas, perrita) != 2) {
-						perrita.mover(2, this.entorno);
-					}
-
-					if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionm(manzanitas, perrita) != 3) {
-						perrita.mover(3, this.entorno);
-
-					}
-					if (entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
-						perrita.disparar();
-					}
-
-					if (perrita.disparo != null && !estaDentroPantalla(perrita.disparo.getX(), perrita.disparo.getY())) {
-						perrita.reiniciarDisparo();
-					}
+					startLayka();
 
 					for (int i = 0; i < manzanitas.length; i++) {
 						manzanitas[i].dibujarse(this.entorno);
@@ -218,38 +191,34 @@ public class Juego extends InterfaceJuego {
 
 					for (int i = 0; i < plantas.length; i++) {
 						if (plantas[i].estaViva) {
-							if (!bolasDeFuego[i].estaActiva) {
-								plantas[i].ataca = false;
+							// Mueve la planta siempre
+							if (i == 0 || i == 4 || i == 5) {
+								plantas[i].moverAdelante(speed, true); // DERECHA
+							} else {
+								plantas[i].moverAdelante(speed + 0.5, false); // ABAJO
 							}
-						if (!plantas[i].ataca){
-							bolasDeFuego[i].x=plantas[i].x;
-							bolasDeFuego[i].y=plantas[i].y;
-						}
-						
-						plantas[i].dibujarse(this.entorno);
-						contador++;
-						if (contador >=600) {
-							plantas[i].ataca = true;
-							contador=0;
-						}
-						
-						if (i == 0 || i == 4 || i == 5) {
-							plantas[i].moverAdelante(speed, true); // DERECHA
-							
-							if (plantas[i].ataca) {
-								bolasDeFuego[i].dibujarse(this.entorno);
-								bolasDeFuego[i].moverAdelante(speed+1, true);
-							}
-						} else {
-							plantas[i].moverAdelante(speed + 0.5, false); // ABAJO
-							
-							if (plantas[i].ataca) {
-								bolasDeFuego[i].dibujarse(this.entorno);
-								bolasDeFuego[i].moverAdelante(speed+1, false);
-							}
-						}
 
-						plantas[i].detectarColisionBordes(this.entorno, entorno.ancho(), entorno.alto());
+							// Verifica si la planta ataca o debe comenzar su ataque
+							if (plantas[i].estaAtacando() && plantas[i].puedeLanzarBola()) {
+								// La planta está atacando, así que mueve la bola de fuego y dibújala
+								bolasDeFuego[i].dibujarse(this.entorno);
+								bolasDeFuego[i].moverAdelante(speed + 1, i == 0 || i == 4 || i == 5);
+								plantas[i].reiniciarContadorAtaque();
+								// El último argumento es true si la planta se mueve hacia la derecha (i == 0,
+								// 4, o 5)
+							} else {
+								// La planta no está atacando, verifica si debe comenzar un nuevo ataque
+								if (!plantas[i].estaAtacando()) {
+									bolasDeFuego[i].x = plantas[i].x;
+									bolasDeFuego[i].y = plantas[i].y;
+								}
+							}
+
+							// Dibuja la planta
+							plantas[i].dibujarse(this.entorno);
+
+							// Detecta colisiones con los bordes
+							plantas[i].detectarColisionBordes(this.entorno, entorno.ancho(), entorno.alto());
 						}
 					}
 
@@ -276,54 +245,82 @@ public class Juego extends InterfaceJuego {
 		}
 	}
 
+	private void startLayka() {
+		if (entorno.estaPresionada(entorno.TECLA_DERECHA) && restriccionm(manzanitas, perrita) != 1) {
+			perrita.mover(1, this.entorno);
+		}
+
+		if (entorno.estaPresionada(entorno.TECLA_ARRIBA) && restriccionm(manzanitas, perrita) != 0) {
+			perrita.mover(0, this.entorno);
+		}
+
+		if (entorno.estaPresionada(entorno.TECLA_ABAJO) && restriccionm(manzanitas, perrita) != 2) {
+			perrita.mover(2, this.entorno);
+		}
+
+		if (entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && restriccionm(manzanitas, perrita) != 3) {
+			perrita.mover(3, this.entorno);
+
+		}
+		if (entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
+			perrita.disparar();
+		}
+
+		if (perrita.disparo != null && !estaDentroPantalla(perrita.disparo.getX(), perrita.disparo.getY())) {
+			perrita.reiniciarDisparo();
+		}
+	}
+
 	public void administrarColisiones() {
+		// Código de administración de colisiones
 		for (int i = 0; i < plantas.length; i++) {
+			if (plantas[i].estaViva) {
+				if (perrita.disparo != null && plantas[i].estaViva && perrita.disparo.isActivo() &&
+						colisionar(perrita.disparo.getX(), perrita.disparo.getY(), plantas[i].getX(), plantas[i].getY(),
+								20)) {
+					plantas[i].estaViva = false;
+					bolasDeFuego[i].estaActiva = false;
+					perrita.reiniciarDisparo();
+					System.out.println("Colisión: Disparo de la perrita y planta " + i);
+				}
 
-			if (perrita.disparo != null && plantas[i].estaViva && perrita.disparo.isActivo() && colisionar(
-
-					perrita.disparo.getX(), perrita.disparo.getY(), plantas[i].getX(), plantas[i].getY(), 20)) {
-
-				plantas[i].estaViva = false;
-				bolasDeFuego[i].estaActiva = false;
-				perrita.reiniciarDisparo();
-			}
-			if (plantas[i].estaViva && colisionar(perrita.x, perrita.y, plantas[i].getX(), plantas[i].getY(), 20)) {
-
-				this.vivo = false;
-
-			}
-		};
-		for (int i = 0; i < bolasDeFuego.length; i++) {
-			
-			if (!bolasDeFuego[i].estaActiva) {
-				if (plantas[i].dirBola == 1) {
-					bolasDeFuego[i].direccion = -bolasDeFuego[i].direccion;
-				}else if (plantas[i].dirBola == 2) {
-					bolasDeFuego[i].direccion = -bolasDeFuego[i].direccion;
-				}else if (plantas[i].dirBola == 3) {
-					bolasDeFuego[i].direccion = -bolasDeFuego[i].direccion;
-				}else if (plantas[i].dirBola == 4) {
-					bolasDeFuego[i].direccion = -bolasDeFuego[i].direccion;
+				if (plantas[i].estaViva) {
+					// Plantas que están vivas pueden atacar
+					if (!plantas[i].ataca) {
+						// Si la planta no está atacando, comienza su ataque
+						bolasDeFuego[i].x = plantas[i].x;
+						bolasDeFuego[i].y = plantas[i].y;
+						plantas[i].empezarAtaque(); // Iniciar el ataque
+						System.out.println("Planta " + i + " inició un ataque");
+					} else {
+						// Plantas que están atacando pueden continuar su ataque
+						bolasDeFuego[i].dibujarse(this.entorno);
+						bolasDeFuego[i].moverAdelante(speed + 1, i == 0 || i == 4 || i == 5);
+					}
+				} else {
+					// Si la planta no está viva, detén su ataque
+					plantas[i].detenerAtaque();
+					System.out.println("Planta " + i + " detuvo su ataque");
 				}
 			}
-			if (bolasDeFuego[i].estaActiva && !estaDentroPantalla(bolasDeFuego[i].getX(), bolasDeFuego[i].getY())) {
-				plantas[i].ataca = false;
-			}
-		};
+		}
+
+		// Recorre las bolas de fuego y desactívalas si salen de la pantalla
 		for (int i = 0; i < bolasDeFuego.length; i++) {
-			if (perrita.disparo != null && bolasDeFuego[i].estaActiva && perrita.disparo.isActivo() && colisionar(
-
-					perrita.disparo.getX(), perrita.disparo.getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
-
-				bolasDeFuego[i].estaActiva = false;
-				perrita.reiniciarDisparo();
+			if (plantas[i].estaAtacando()) {
+				// Añade la lógica para detectar si la bola de fuego sale de la pantalla
+				if (!estaDentroPantalla(bolasDeFuego[i].x, bolasDeFuego[i].y)) {
+					plantas[i].detenerAtaque();
+					System.out.println("Bola de fuego de Planta " + i + " se desactivó");
+					if(!plantas[i].estaAtacando() && plantas[i].puedeLanzarBola()){
+						System.out.println("Bola de fuego de Planta " + i + " se volvio a activar");
+						plantas[i].empezarAtaque();
+						bolasDeFuego[i].estaActiva = true;
+					}
+				}
 			}
-			if (bolasDeFuego[i].estaActiva && colisionar(perrita.x, perrita.y, bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
+		}
 
-				this.vivo = false;
-
-			}
-		};
 		for (int i = 0; i < autos.length; i++) {
 			if (autos[i] != null && bolasDeFuego[i].estaActiva && colisionar(
 
@@ -331,7 +328,8 @@ public class Juego extends InterfaceJuego {
 
 				autos[i].estaActivo = false;
 			}
-			if (bolasDeFuego[i].estaActiva && colisionar(perrita.x, perrita.y, bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
+			if (bolasDeFuego[i].estaActiva
+					&& colisionar(perrita.x, perrita.y, bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
 
 				this.vivo = false;
 			}

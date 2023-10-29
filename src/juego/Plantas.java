@@ -20,11 +20,13 @@ public class Plantas {
 	Image img2;
 	Image img3;
 	Image img4;
-
-	boolean ataca;
+	
 	int dirBola;
 	
 	boolean estaViva;
+	boolean ataca;
+	private int contadorAtaque;
+
 	
 	public Plantas(double x, double y, double e, int d) {
 		
@@ -35,6 +37,7 @@ public class Plantas {
 		this.estaViva = true;
 		this.dirBola = 0;
 		this.ataca = false;
+		contadorAtaque = 0;
 		colision = false;
 		
 		//plantas horizontal
@@ -61,6 +64,18 @@ public class Plantas {
 		System.out.println("ancho "+this.ancho+"  alto "+this.alto);
 	}
 
+	public boolean estaAtacando() {
+        return this.ataca;
+    }
+
+    public void empezarAtaque() {
+        this.ataca = true;
+    }
+
+    public void detenerAtaque() {
+        this.ataca = false;
+    }
+
 	public void moverAdelante(double speed, boolean isHorizontal) {
 	    if (isHorizontal) {
 	        this.x += direccion * speed;
@@ -68,6 +83,16 @@ public class Plantas {
 	        this.y += direccion * speed;
 	    }
 	}
+
+	public boolean puedeLanzarBola() {
+		return contadorAtaque >= 9000; // Cambia el valor 600 según tu necesidad
+	}
+	
+	public void reiniciarContadorAtaque() {
+		contadorAtaque = 0;
+	}
+	
+
 	public void detectarColisionBordes(Entorno entorno, int anchoPantalla, int altoPantalla) {
 		if (x + ancho / 2 >= anchoPantalla) {
 	        this.img=img2;
@@ -92,6 +117,7 @@ public class Plantas {
 	public void dibujarse(Entorno entorno)
 	{
 		entorno.dibujarImagen(img, this.x, this.y, 0, this.escala);
+		contadorAtaque++;
 	}
 	
 	 	public double getX() {

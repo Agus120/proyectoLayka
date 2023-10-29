@@ -35,7 +35,6 @@ public class BolasDeFuego {
 	        this.y += direccion * speed;
 	    }
 	}
-	
 	public void dibujarse(Entorno entorno)
 	{
 		entorno.dibujarImagen(img, this.x, this.y, 0, this.escala);
