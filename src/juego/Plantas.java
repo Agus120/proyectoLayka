@@ -82,7 +82,7 @@ public class Plantas {
 	}
 
 	public boolean puedeLanzarBola() {
-		return contadorAtaque >= 9000; 
+		return contadorAtaque >= 1200; 
 	}
 	
 	public void reiniciarContadorAtaque() {

@@ -75,10 +75,7 @@ public class Juego extends InterfaceJuego {
 			autos[i] = new Autos(sA[i].x, sA[i].y, 0.03, 1);
 		}
 
-		for (int i = 0; i < plantas.length; i++) {
-			plantas[i] = new Plantas(s[i].x, s[i].y, 0.02, 1);
-			bolasDeFuego[i] = new BolasDeFuego(plantas[i].x, plantas[i].y, 0.02, 1);
-		}
+		generarPlantas();
 
 		for (int i = 0; i < manzanitas.length; i++) {
 			if (i < 3) {
@@ -94,6 +91,17 @@ public class Juego extends InterfaceJuego {
 
 		// Inicia el juego!
 		this.entorno.iniciar();
+	}
+
+	private void generarPlantas() {
+		for (int i = 0; i < plantas.length; i++) {
+			plantas[i] = new Plantas(s[i].x, s[i].y, 0.02, 1);
+			bolasDeFuego[i] = new BolasDeFuego(plantas[i].x, plantas[i].y, 0.02, 1);
+		}
+	}
+	private void respawnPlantas(int i) {
+		plantas[i] = new Plantas(s[i].x, s[i].y, 0.02, 1);
+		bolasDeFuego[i] = new BolasDeFuego(plantas[i].x, plantas[i].y, 0.02, 1);
 	}
 
 	private void generarSpawnsA(Spawn[] s) {
@@ -193,6 +201,9 @@ public class Juego extends InterfaceJuego {
 
 					for (int i = 0; i < plantas.length; i++) {
 						if (plantas[i].estaViva) {
+							if (plantas[i].puedeLanzarBola()){
+								plantas[i].empezarAtaque();
+							}
 							// Mueve la planta siempre
 							if (i == 0 || i == 4 || i == 5) {
 								plantas[i].moverAdelante(speed, true); // DERECHA
@@ -221,8 +232,8 @@ public class Juego extends InterfaceJuego {
 
 							// Detecta colisiones con los bordes
 							plantas[i].detectarColisionBordes(this.entorno, entorno.ancho(), entorno.alto());
-						} else{
-
+						} else if(!plantas[i].estaViva && muertes % 2 == 0){
+							respawnPlantas(i);
 						}
 					}
 
@@ -305,7 +316,6 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
-
 		// Recorre las bolas de fuego y desactívalas si salen de la pantalla
 		for (int i = 0; i < bolasDeFuego.length; i++) {
 			if (plantas[i].estaAtacando()) {
@@ -321,29 +331,77 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+		for (int i = 0; i < bolasDeFuego.length; i++) {
+			if (perrita.disparo != null && plantas[i].estaAtacando() && perrita.disparo.isActivo() && colisionar(
 
-		for (int i = 0; i < autos.length; i++) {
-			if (autos[i] != null && bolasDeFuego[i].estaActiva && colisionar(
+					perrita.disparo.getX(), perrita.disparo.getY(), bolasDeFuego[i].getX(),bolasDeFuego[i].getY(), 20)) {
 
-					autos[i].getX(), autos[i].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
+				plantas[i].detenerAtaque();
+				System.out.println("Bola de fuego de Planta " + i + " se desactivó");
 
-				autos[i].estaActivo = false;
-			}
-			if (bolasDeFuego[i].estaActiva
-					&& colisionar(perrita.x, perrita.y, bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
-
-				this.vivo = false;
-			}
-		}
-		for (int i = 0; i < autos.length; i++) {
-			if (perrita.disparo != null && autos[i] != null && perrita.disparo.isActivo() && colisionar(
-
-					perrita.disparo.getX(), perrita.disparo.getY(), autos[i].getX(), autos[i].getY(), 20)) {
+					if(!plantas[i].estaAtacando() && plantas[i].puedeLanzarBola()){
+						System.out.println("Bola de fuego de Planta " + i + " se volvio a activar");
+						plantas[i].empezarAtaque();
+						bolasDeFuego[i].estaActiva = true;
+					}
 
 				perrita.reiniciarDisparo();
 
 			}
-			if (autos[i] != null && colisionar(perrita.x, perrita.y, autos[i].getX(), autos[i].getY(), 20)) {
+			if (plantas[i].estaViva && colisionar(perrita.x, perrita.y, plantas[i].getX(), plantas[i].getY(), 20)) {
+
+				this.vivo = false;
+
+			}
+			if (plantas[i].estaAtacando() && colisionar(perrita.x, perrita.y, bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 20)) {
+
+				this.vivo = false;
+
+			}
+		}
+		for (int i = 0; i < autos.length; i++) {
+			if (autos[0].estaActivo && bolasDeFuego[i].estaActiva && colisionar(
+
+					autos[0].getX(), autos[0].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[0].estaActivo = false;
+			}
+			if (bolasDeFuego[0].estaActiva && colisionar(autos[0].getX(), autos[0].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[0].estaActivo = false;
+			}
+
+			if (autos[1].estaActivo && bolasDeFuego[i].estaActiva && colisionar(
+
+					autos[1].getX(), autos[1].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[1].estaActivo = false;
+			}
+			if (bolasDeFuego[1].estaActiva && colisionar(autos[1].getX(), autos[1].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[1].estaActivo = false;
+			}
+
+			if (autos[2].estaActivo && bolasDeFuego[i].estaActiva && colisionar(
+
+					autos[2].getX(), autos[2].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[2].estaActivo = false;
+			}
+			if (bolasDeFuego[2].estaActiva && colisionar(autos[2].getX(), autos[2].getY(), bolasDeFuego[i].getX(), bolasDeFuego[i].getY(), 30)) {
+
+				autos[2].estaActivo = false;
+			}
+		}
+		for (int i = 0; i < autos.length; i++) {
+			if (perrita.disparo != null && autos[i].estaActivo && perrita.disparo.isActivo() && colisionar(
+
+					perrita.disparo.getX(), perrita.disparo.getY(), autos[i].getX(), autos[i].getY(), 30)) {
+
+				perrita.reiniciarDisparo();
+
+			}
+			if (autos[i].estaActivo && colisionar(perrita.x, perrita.y, autos[i].getX(), autos[i].getY(), 30)) {
 
 				this.vivo = false;
 
