@@ -38,7 +38,6 @@ public class Juego extends InterfaceJuego {
 
 	private static final int ESTADO_MENU = 0;
 	private static final int ESTADO_JUEGO = 1;
-	private static final int ESTADO_PUNTUACION = 2;
 
 	private int estadoActual;
 
@@ -48,6 +47,7 @@ public class Juego extends InterfaceJuego {
 	private boolean keyEnabled = true;
 	private long keyDelay = 200;
 
+	private int tiempo=90;
 	// ************************** */
 
 	// Variables y métodos propios de cada grupo
@@ -244,7 +244,7 @@ public class Juego extends InterfaceJuego {
 				} else {
 					entorno.dibujarImagen(imgFondoMuerto, 400, 300, 0);
 					entorno.cambiarFont("Arial", 60, Color.GREEN);
-					entorno.escribirTexto("MUERTOOOOO", 200, 300);
+					entorno.escribirTexto("Cantidad de puntos:" + intToString(puntos), 70, 300);
 				}
 
 				break;
@@ -286,6 +286,7 @@ public class Juego extends InterfaceJuego {
 				if (perrita.disparo != null && plantas[i].estaViva && perrita.disparo.isActivo() && colisionar(
 						perrita.disparo.getX(), perrita.disparo.getY(), plantas[i].getX(), plantas[i].getY(), 20)) {
 					muertes++;
+					puntos+=50;
 					plantas[i].estaViva = false;
 					bolasDeFuego[i].estaActiva = false;
 					perrita.reiniciarDisparo();
@@ -385,14 +386,15 @@ public class Juego extends InterfaceJuego {
 			if (vivo) {
 				tiempoPuntos++;
 
-				if (tiempoPuntos >= 600) {
-					puntos += 5;
+				if (tiempoPuntos >= 200) {
+					puntos += 1;
+					tiempo--;
 					tiempoPuntos = 0;
 				}
 
 				entorno.cambiarFont("Serif", 18, Color.white);
 				entorno.escribirTexto("Puntos: " + puntos, 20, 20);
-				entorno.escribirTexto("Plantas asesinadas: " + muertes, 20, 50);
+				entorno.escribirTexto("Tiempo restante: " + tiempo, 330, 20);
 			}
 		}
 	}
@@ -433,7 +435,16 @@ public class Juego extends InterfaceJuego {
 		}
 		return 5;
 	}
-
+	public String intToString(int numero) {
+		// Método 1: Usando String.valueOf()
+		String resultado1 = String.valueOf(numero);
+	
+		// Método 2: Concatenando con una cadena vacía
+		String resultado2 = numero + "";
+	
+		return resultado1;  // O resultado2, dependiendo de tu preferencia
+	}
+	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Juego juego = new Juego();
