@@ -45,7 +45,6 @@ public class Juego extends InterfaceJuego {
 	private Boton botonSalir;
 	private int selectedButton = 0;
 	private boolean keyEnabled = true;
-	private long keyDelay = 200;
 
 	private int tiempo=90;
 	// ************************** */
@@ -438,9 +437,6 @@ public class Juego extends InterfaceJuego {
 	public String intToString(int numero) {
 		// Método 1: Usando String.valueOf()
 		String resultado1 = String.valueOf(numero);
-	
-		// Método 2: Concatenando con una cadena vacía
-		String resultado2 = numero + "";
 	
 		return resultado1;  // O resultado2, dependiendo de tu preferencia
 	}
