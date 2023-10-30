@@ -18,6 +18,7 @@ public class Juego extends InterfaceJuego {
 	Spawn[] sA;
 	BolasDeFuego[] bolasDeFuego;
 
+
 	double speed = 1;
 	int cantPlantas = 6;
 	int cantAutos = 3;
@@ -27,6 +28,7 @@ public class Juego extends InterfaceJuego {
 	int cont = 0;
 	boolean disparando = false;
 	boolean vivo = true;
+	int muertes = 0;
 
 	Image fondo = Herramientas.cargarImagen("calles.png");
 	Image imgFondoMuerto = Herramientas.cargarImagen("perdi.png");
@@ -199,7 +201,7 @@ public class Juego extends InterfaceJuego {
 							}
 
 							// Verifica si la planta ataca o debe comenzar su ataque
-							if (plantas[i].estaAtacando() && plantas[i].puedeLanzarBola()) {
+							if (plantas[i].puedeLanzarBola() && plantas[i].estaAtacando()  ) {
 								// La planta está atacando, así que mueve la bola de fuego y dibújala
 								bolasDeFuego[i].dibujarse(this.entorno);
 								bolasDeFuego[i].moverAdelante(speed + 1, i == 0 || i == 4 || i == 5);
@@ -219,6 +221,8 @@ public class Juego extends InterfaceJuego {
 
 							// Detecta colisiones con los bordes
 							plantas[i].detectarColisionBordes(this.entorno, entorno.ancho(), entorno.alto());
+						} else{
+
 						}
 					}
 
@@ -275,9 +279,8 @@ public class Juego extends InterfaceJuego {
 		// Código de administración de colisiones
 		for (int i = 0; i < plantas.length; i++) {
 			if (plantas[i].estaViva) {
-				if (perrita.disparo != null && plantas[i].estaViva && perrita.disparo.isActivo() &&
-						colisionar(perrita.disparo.getX(), perrita.disparo.getY(), plantas[i].getX(), plantas[i].getY(),
-								20)) {
+				if (perrita.disparo != null && plantas[i].estaViva && perrita.disparo.isActivo() && colisionar(perrita.disparo.getX(), perrita.disparo.getY(), plantas[i].getX(), plantas[i].getY(),20)) {
+					muertes ++;
 					plantas[i].estaViva = false;
 					bolasDeFuego[i].estaActiva = false;
 					perrita.reiniciarDisparo();
@@ -290,8 +293,6 @@ public class Juego extends InterfaceJuego {
 						// Si la planta no está atacando, comienza su ataque
 						bolasDeFuego[i].x = plantas[i].x;
 						bolasDeFuego[i].y = plantas[i].y;
-						plantas[i].empezarAtaque(); // Iniciar el ataque
-						System.out.println("Planta " + i + " inició un ataque");
 					} else {
 						// Plantas que están atacando pueden continuar su ataque
 						bolasDeFuego[i].dibujarse(this.entorno);
@@ -357,6 +358,7 @@ public class Juego extends InterfaceJuego {
 
 				entorno.cambiarFont("Serif", 18, Color.white);
 				entorno.escribirTexto("Puntos: " + puntos, 20, 20);
+				entorno.escribirTexto("Plantas asesinadas: " + muertes, 20, 50);
 			}
 		}
 	}

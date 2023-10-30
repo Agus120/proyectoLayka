@@ -21,8 +21,6 @@ public class Plantas {
 	Image img3;
 	Image img4;
 	
-	int dirBola;
-	
 	boolean estaViva;
 	boolean ataca;
 	private int contadorAtaque;
@@ -35,7 +33,6 @@ public class Plantas {
 		this.escala=e;
 		this.direccion=d;
 		this.estaViva = true;
-		this.dirBola = 0;
 		this.ataca = false;
 		contadorAtaque = 0;
 		colision = false;
@@ -85,7 +82,7 @@ public class Plantas {
 	}
 
 	public boolean puedeLanzarBola() {
-		return contadorAtaque >= 9000; // Cambia el valor 600 según tu necesidad
+		return contadorAtaque >= 9000; 
 	}
 	
 	public void reiniciarContadorAtaque() {
@@ -97,20 +94,16 @@ public class Plantas {
 		if (x + ancho / 2 >= anchoPantalla) {
 	        this.img=img2;
 	        direccion = -direccion;
-	        dirBola = 1;
 	    } else if (x - ancho / 2 <= 0) {
 	    	this.img=img1;
 	        direccion = -direccion;
-	        dirBola = 2;
 	    }
 	    if (y + alto / 2 >= altoPantalla) {
 	    	this.img=img3;
 	        direccion = -direccion;
-	        dirBola = 3;
 	    } else if (y - alto / 2 <= 0) {
 	    	this.img=img4;
 	        direccion = -direccion;
-	        dirBola = 4;
 	    }
     }
 	
